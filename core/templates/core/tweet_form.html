@@ -6,4 +6,18 @@ Tweet
 
 {% block content %}
 <h1 class="text-center mt-5">Welcome tweet_form</h1>
+
+<h2>
+    {%if form.instance.pk%}
+    Edit Tweet
+    {% else %}
+    Create Tweet
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+</h2>
+
 {% endblock %}
