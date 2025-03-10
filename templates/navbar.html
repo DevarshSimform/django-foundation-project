@@ -14,11 +14,13 @@
                   <a class="nav-link active" href="{% url 'tweet_list' %}">Tweets</a>
               </li>
           </ul>
-
-          <form class="d-flex me-3" role="search" method="GET" action="{% url 'tweet_list'%}">
-              <input class="form-control me-2" type="search" name="q" placeholder="Search by username..." aria-label="Search">
-              <button class="btn btn-dark" type="submit">Search</button>
-          </form>
+        
+          {% if show_search %} 
+            <form class="d-flex me-3" role="search" method="GET" action="{% url 'tweet_list'%}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search by username..." aria-label="Search">
+                <button class="btn btn-dark" type="submit">Search</button>
+            </form>
+          {% endif %}
 
           {% if user.is_authenticated %}
               <div class="dropdown">
