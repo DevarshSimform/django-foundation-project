@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Tweet
@@ -7,17 +8,17 @@ Tweet
 {% block content %}
 <h1 class="text-center mt-5">Welcome tweet_form</h1>
 
-<h2>
+<p>
     {%if form.instance.pk%}
-    Edit Tweet
+    <h2>Edit Tweet</h2>
     {% else %}
-    Create Tweet
+    <h2>Create Tweet</h2>
     {% endif %}
     <form method="post" enctype="multipart/form-data" class="form">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-</h2>
+</p>
 
 {% endblock %}

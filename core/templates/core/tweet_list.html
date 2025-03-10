@@ -1,7 +1,10 @@
-{% extends "layout.html" %} {% block title %} Tweet {% endblock %} {% block content %}
-<h1 class="text-center mt-5">Welcome tweet_list</h1>
+{% extends "layout.html" %} 
+{% block title %} Tweet {% endblock %} 
 
-<a class="btn btn-primary" href="{% url 'tweet_create'%}">New Tweet</a>
+{% block content %}
+<h1 class="text-center mt-5">tweet_list</h1>
+
+<a class="btn btn-primary mt-2 mb-3" href="{% url 'tweet_create'%}">New Tweet</a>
 <div class="container row gap-3">
   {% for tweet in tweets %}
   <div class="card" style="width: 18rem">
@@ -9,14 +12,17 @@
     <div class="card-body">
       <h5 class="card-title">{{tweet.user.username}}</h5>
       <p class="card-text">{{tweet.text}}</p>
-      <a href="{% url 'tweet_edit' tweet.id%}" class="btn btn-primary">Edit</a>
-      <button
-        type="button"
-        class="btn btn-danger"
-        data-bs-toggle="modal"
-        data-bs-target="#deleteModal{{ tweet.id }}">
-        Delete
-      </button>
+      {% if tweet.user == user %}
+        <a href="{% url 'tweet_edit' tweet.id%}" class="btn btn-primary">Edit</a>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteModal{{ tweet.id }}">
+          Delete
+        </button>
+      {% endif %}
+      
     </div>
   </div>
 
