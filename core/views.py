@@ -7,17 +7,21 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 
+
 def home_page(req):
-    return render(req, 'core/base.html') 
+    return render(req, 'core/base.html')
 
 
 def tweet_list(req):
+    query = req.GET.get('q', '').strip()
     tweets = Tweet.objects.all().order_by('-created_at')
+    if query:
+        tweets = tweets.filter(user__username__icontains = query)
     return render(req, 'core/tweet_list.html', {'tweets': tweets})
 
 
 def my_tweets(req):
-    tweets = Tweet.objects.filter(user = req.user)
+    tweets = Tweet.objects.filter(user = req.user).order_by('-created_at')
     return render(req, 'core/my_tweets.html', {'my_tweets': tweets})
 
 @login_required
