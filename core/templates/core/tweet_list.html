@@ -1,34 +1,111 @@
-{% extends "layout.html" %} 
-{% block title %} Tweets {% endblock %} 
+{% extends "layout.html" %}
+{% block title %}Tweets{% endblock %}
 
 {% block content %}
 <h1 class="text-center mt-5">Tweet List</h1>
 
 <div class="container">
-    <!-- New Tweet button left-aligned -->
-
-    <!-- Tweet Cards Grid -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for tweet in tweets %}
-        <div class="col">
+    <div id="tweet-container" class="row row-cols-1 row-cols-md-3 g-4">
+        {% for tweet in page_obj %}
+        <div class="col tweet-card">
             <div class="card h-100 shadow-lg p-3 rounded-4 border-0" style="background-color: #f8f9fa;">
-                
                 {% if tweet.img %}
                     <img src="{{ tweet.img.url }}" class="card-img-top rounded-3"
                          alt="Tweet Image" style="height: 200px; object-fit: cover;">
                 {% endif %}
-                
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-dark fw-bold">{{ tweet.user.username }}</h5>
                     <p class="card-text text-muted flex-grow-1">{{ tweet.text }}</p>
-
-            
                 </div>
             </div>
         </div>
-    
         {% endfor %}
     </div>
+
+    <div id="loading" style="display: none;" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    {% if page_obj.has_next %}
+        <button id="load-more" class="btn btn-primary d-block mx-auto mt-3">Load More</button>
+    {% endif %}
 </div>
 
+<script>
+    let currentPage = 1;
+    const loadMoreBtn = document.getElementById('load-more');
+    const tweetContainer = document.getElementById('tweet-container');
+    const loading = document.getElementById('loading');
+    let loadingTweets = false;
+
+    async function loadMoreTweets() {
+        if (loadingTweets) return;
+        loadingTweets = true;
+
+        currentPage++;
+        loadMoreBtn.style.display = 'none';
+        loading.style.display = 'block';
+
+        // Get the current search query from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q') || '';
+
+        try {
+            // Include search query in the fetch request
+            const response = await fetch(`?page=${currentPage}&q=${encodeURIComponent(query)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await response.json();
+
+            data.tweets.forEach(tweet => {
+                const tweetDiv = document.createElement('div');
+                tweetDiv.classList.add('col', 'tweet-card');
+                tweetDiv.innerHTML = `
+                    <div class="card h-100 shadow-lg p-3 rounded-4 border-0" style="background-color: #f8f9fa;">
+                        ${tweet.img_url ? `<img src="${tweet.img_url}" class="card-img-top rounded-3" alt="Tweet Image" style="height: 200px; object-fit: cover;">` : ''}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-dark fw-bold">${tweet.user}</h5>
+                            <p class="card-text text-muted flex-grow-1">${tweet.text}</p>
+                        </div>
+                    </div>
+                `;
+                tweetContainer.appendChild(tweetDiv);
+            });
+
+            if (data.has_next) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error loading more tweets:', error);
+        } finally {
+            loading.style.display = 'none';
+            loadingTweets = false;
+        }
+    }
+
+    loadMoreBtn.addEventListener('click', loadMoreTweets);
+
+    // Infinite Scroll Event
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            if (loadMoreBtn.style.display !== 'none' && !loadingTweets) {
+                loadMoreTweets();
+            }
+        }
+    });
+</script>
+
+
+<style>
+    .tweet-card {
+        transition: transform 0.2s ease;
+    }
+    .tweet-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
 {% endblock %}

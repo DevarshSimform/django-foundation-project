@@ -4,25 +4,77 @@ from .forms import TweetForm, UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
-
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 
 def home_page(req):
     return render(req, 'core/base.html')
 
 
-def tweet_list(req):
-    query = req.GET.get('q', '').strip()
-    tweets = Tweet.objects.all().order_by('-created_at')
+def tweet_list(request):
+    query = request.GET.get('q')  # Get search query from request
+    
+    # Filter by username if query exists, else return all tweets
     if query:
-        tweets = tweets.filter(user__username__icontains = query)
-    return render(req, 'core/tweet_list.html', {'tweets': tweets, 'show_search': True})
+        tweets = Tweet.objects.filter(user__username__icontains=query).order_by('-created_at')
+    else:
+        tweets = Tweet.objects.all().order_by('-created_at')
+
+    paginator = Paginator(tweets, 20)  # Load 20 tweets initially
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Handle AJAX request for infinite scroll
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        tweets_data = [
+            {
+                'id': tweet.id,
+                'user': tweet.user.username,
+                'text': tweet.text,
+                'img_url': tweet.img.url if tweet.img else None,
+                'created_at': tweet.created_at.strftime('%b %d, %Y %H:%M'),
+            }
+            for tweet in page_obj
+        ]
+        return JsonResponse({
+            'tweets': tweets_data,
+            'has_next': page_obj.has_next()
+        })
+
+    return render(request, 'core/tweet_list.html', {
+        'page_obj': page_obj,
+        'show_search': True,
+        'query': query,  # Pass query to template
+    })
 
 
-def my_tweets(req):
-    tweets = Tweet.objects.filter(user = req.user).order_by('-created_at')
-    return render(req, 'core/my_tweets.html', {'my_tweets': tweets})
+def my_tweets(request):
+    tweets = Tweet.objects.filter(user=request.user).order_by('-created_at')
+    paginator = Paginator(tweets, 10)  # Load 10 tweets initially
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Handle AJAX request for infinite scroll
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        tweets_data = [
+            {
+                'id': tweet.id,
+                'user': tweet.user.username,
+                'text': tweet.text,
+                'img_url': tweet.img.url if tweet.img else None,
+                'created_at': tweet.created_at.strftime('%b %d, %Y %H:%M'),
+                'editable': tweet.user == request.user,  # Add editable info
+            }
+            for tweet in page_obj
+        ]
+        return JsonResponse({
+            'tweets': tweets_data,
+            'has_next': page_obj.has_next()
+        })
+
+    return render(request, 'core/my_tweets.html', {'page_obj': page_obj})
+
 
 @login_required
 def tweet_create(req):
