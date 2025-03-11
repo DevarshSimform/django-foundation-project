@@ -90,6 +90,9 @@ def login_user(req):
             if user is not None:
                 login(req, user)
                 return redirect('tweet_list')
+        else:
+            messages.error(req, 'Invalid User')
+            return render(req, 'registration/login.html', {'form': form})
     else:
         form = AuthenticationForm()
         return render(req, 'registration/login.html', {'form': form})
