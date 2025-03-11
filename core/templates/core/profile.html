@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">{{ user.username }}'s Profile</h3>
+            <p class="text-muted">Email: {{ user.email }}</p>
+            <p>First Name: {{ user.first_name|default:"Not provided" }}</p>
+            <p>Last Name: {{ user.last_name|default:"Not provided" }}</p>
+            <p>Date Joined: {{ user.date_joined|date:"F j, Y" }}</p>
+
+            <a href="{% url 'my_tweets' %}" class="btn btn-primary">My Tweets</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

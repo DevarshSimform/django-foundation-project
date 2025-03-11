@@ -28,7 +28,7 @@
                       {{ user.username }}
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="#">Profile</a></li>
+                      <li><a class="dropdown-item" href="{% url 'profile'%}">Profile</a></li>
                       <li><a class="dropdown-item" href="{% url 'my_tweets' %}">My Tweets</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
@@ -36,7 +36,7 @@
               </div>
           {% else %}
               {% comment %} <a href="{% url 'register' %}" class="btn btn-primary me-2">Register</a> {% endcomment %}
-              <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+              <a href="{% url 'login_user' %}" class="btn btn-primary">Login</a>
           {% endif %}
       </div>
   </div>

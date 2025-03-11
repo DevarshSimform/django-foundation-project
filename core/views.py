@@ -32,6 +32,7 @@ def tweet_create(req):
             tweet = form.save(commit=False)
             tweet.user = req.user
             tweet.save()
+            req.session.modified = True
             messages.success(req, "Tweet created successfully!")
             return redirect('my_tweets')
         pass
@@ -49,6 +50,7 @@ def tweet_edit(req, tweet_id):
             tweet = form.save(commit=False)
             tweet.user = req.user
             tweet.save()
+            req.session.modified = True
             messages.success(req, "Tweet updated successfully!")
             return redirect('my_tweets')
 
@@ -62,8 +64,13 @@ def tweet_delete(req, tweet_id):
     tweet = get_object_or_404(Tweet, pk=tweet_id, user=req.user)
     
     tweet.delete()
+    req.session.modified = True
     messages.success(req, "Tweet deleted successfully!")
     return redirect('my_tweets')
+
+
+def profile(req):
+    return render(req, 'core/profile.html')
 
 
 def register(req):
