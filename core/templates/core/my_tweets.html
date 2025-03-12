@@ -25,21 +25,22 @@
                     <h5 class="card-title text-dark fw-bold">{{ tweet.user.username }}</h5>
                     <p class="card-text text-muted flex-grow-1">{{ tweet.text }}</p>
 
-                    {% if tweet.user == user %}
+                    {% if tweet.id %}
                         <div class="mt-auto d-flex justify-content-start gap-2">
                             <a href="{% url 'tweet_edit' tweet.id %}" class="btn btn-primary px-3 rounded-3">
                                 Edit
                             </a>
-                            <button type="button" class="btn btn-danger px-3 rounded-2" 
-                                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ tweet.id }}">
+                            <a href="{% url 'tweet_confirm_delete' tweet.id %}" class="btn btn-danger px-3 rounded-2">
                                 Delete
-                            </button>
+                            </a>
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-        {% include "core/confirm_delete_modal.html" %}
+
+        {% comment %} {% include "core/confirm_delete_modal.html" %} {% endcomment %}
+        
         {% endfor %}
     </div>
 
@@ -86,13 +87,12 @@
                             <p class="card-text text-muted flex-grow-1">${tweet.text}</p>
                             ${tweet.editable ? `
                                 <div class="mt-auto d-flex justify-content-start gap-2">
-                                    <a href="/tweets/edit/${tweet.id}/" class="btn btn-primary px-3 rounded-3">
+                                    <a href="/mytweets/edit/${tweet.id}/" class="btn btn-primary px-3 rounded-3">
                                         Edit
                                     </a>
-                                    <button type="button" class="btn btn-danger px-3 rounded-2" 
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal${tweet.id}">
+                                    <a href="/mytweets/delete/${tweet.id}/confirm" class="btn btn-danger px-3 rounded-2">
                                         Delete
-                                    </button>
+                                    </a>
                                 </div>
                             ` : ''}
                         </div>
