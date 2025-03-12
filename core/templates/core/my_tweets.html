@@ -27,7 +27,7 @@
                     <h5 class="card-title text-dark fw-bold">{{ tweet.user.username }}</h5>
                     <p class="card-text text-muted flex-grow-1">{{ tweet.text }}</p>
 
-                    {% if tweet.user == user %}
+                    {% comment %} {% if tweet.user == user %} {% endcomment %}
                         <div class="mt-auto d-flex justify-content-start gap-2">
                             <a href="{% url 'tweet_edit' tweet.id %}" class="btn btn-primary px-3 rounded-3">
                                 Edit
@@ -37,8 +37,7 @@
                                 Delete
                             </button>
                         </div>
-                    
-                    {% endif %}
+                    {% comment %} {% endif %} {% endcomment %}
                 </div>
             </div>
         </div>
