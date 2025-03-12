@@ -89,6 +89,10 @@ def login_user(req):
             user = authenticate(username=uname, password=password)
             if user is not None:
                 login(req, user)
+                req.session.set_expiry(0)
+                return redirect('tweet_list')
+            else:
+                messages.warning(req, 'Invalid user')
                 return redirect('tweet_list')
         else:
             messages.warning(req, 'Invalid user')
