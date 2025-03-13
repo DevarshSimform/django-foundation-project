@@ -13,6 +13,9 @@
               <li class="nav-item">
                   <a class="nav-link active" href="{% url 'tweet_list' %}">Tweets</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'display_profiles' %}">Profiles</a>
+            </li>
           </ul>
 
           <form class="d-flex me-3" role="search" method="GET" action="{% url 'tweet_list'%}">
@@ -26,7 +29,7 @@
                       {{ user.username }}
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">Profile</a></li>
                       <li><a class="dropdown-item" href="{% url 'my_tweets' %}">My Tweets</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>

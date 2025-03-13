@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Tweet
+from .models import Tweet, Profile
 from .forms import TweetForm, UserRegistrationForm
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -23,6 +24,23 @@ def tweet_list(req):
 def my_tweets(req):
     tweets = Tweet.objects.filter(user = req.user).order_by('-created_at')
     return render(req, 'core/my_tweets.html', {'my_tweets': tweets})
+
+
+@login_required
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = user.profile
+    return render(request, 'core/profile.html', {
+        'profile_user': user,
+        'profile': profile
+    })
+
+
+@login_required
+def display_profiles(req):
+    profiles = Profile.objects.all()
+    return render(req, 'core/users.html', {'profiles': profiles})
+
 
 @login_required
 def tweet_create(req):
@@ -74,6 +92,7 @@ def register(req):
             user.set_password(form.cleaned_data.get('password1'))
             user.save()
             login(req, user)
+            req.session.set_expiry(0)
             return redirect('tweet_list')
     else:
         form = UserRegistrationForm()

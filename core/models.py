@@ -13,4 +13,31 @@ class Tweet(models.Model):
     def __str__(self):
         return self.user.username 
     
-# Commit msg of models creations 
+# Commit msg of models creations
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', blank=True, null=True)
+    following = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followers'
+    )
+
+    def follow(self, profile):
+        if profile != self:
+            self.following.add(profile)
+
+    def unfollow(self, profile):
+        if profile != self:
+            self.following.remove(profile)
+
+    def is_following(self, profile):
+        return self.following.filter(id=profile.id).exists()
+
+    def is_followed_by(self, profile):
+        return self.followers.filter(id=profile.id).exists()
+
+    def __str__(self):
+        return self.user.username

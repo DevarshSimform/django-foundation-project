@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
-
+    path('profile/<str:username>/', views.profile_view, name='profile'),
+    path('users', views.display_profiles, name='display_profiles'),
     # path('search-users/', views.search_users, name='search_users'),
 ] 

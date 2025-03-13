@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">All Users</h2>
+    <div class="row">
+        {% for profile in profiles %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <a href="{% url 'profile' profile.user.username %}" class="text-decoration-none">
+                            <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="rounded-circle mb-2" width="80" height="80">
+                            <h5 class="card-title">{{ profile.user.username }}</h5>
+                        </a>
+                    
+                        <p class="card-text text-muted">{{ profile.bio|truncatechars:50 }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
