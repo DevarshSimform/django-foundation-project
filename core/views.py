@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Tweet
-from .forms import TweetForm, UserRegistrationForm
+from .models import Tweet, Profile
+from .forms import TweetForm, UserRegistrationForm, ProfileForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -47,6 +47,11 @@ def tweet_list(request):
         'show_search': True,
         'query': query,  # Pass query to template
     })
+
+
+def users_list(request):
+    profiles = Profile.objects.all()
+    return render(request, 'core/users.html', {'profiles': profiles})
 
 
 def my_tweets(request):
@@ -125,8 +130,23 @@ def tweet_confirm_delete(req, tweet_id):
     return render(req, 'core/tweet_confirm_delete.html', {'tweet': tweet})
 
 
-def profile(req):
-    return render(req, 'core/profile.html')
+
+def profile(request, username):
+    profile = Profile.objects.get(user__username = username)
+    return render(request, 'core/profile.html', {'profile': profile, 'profile_user': request.user})
+
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', {'profile': profile})  # Redirect to the profile page
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'core/edit_profile.html', {'form': form, 'profile': profile})
 
 
 def register(req):
@@ -152,6 +172,7 @@ def login_user(req):
             user = authenticate(username=uname, password=password)
             if user is not None:
                 login(req, user)
+                req.session.set_expiry(0)
                 return redirect('tweet_list')
         else:
             messages.error(req, 'Invalid User')

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">Edit Profile</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {% if form.instance.avatar %}
+                        <img src="{{ form.instance.avatar.url }}" alt="Avatar" class="rounded-circle mb-3" width="100" height="100">
+                    {% endif %}
+                    {{ form.avatar|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+                    {{ form.bio|as_crispy_field }}
+                </div>
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a href="{% url 'profile' profile.user.username %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
