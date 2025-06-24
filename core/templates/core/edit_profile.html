@@ -17,8 +17,8 @@
                 <div class="mb-3">
                     {{ form.bio|as_crispy_field }}
                 </div>
-                <button type="submit" class="btn btn-success">Save Changes</button>
-                <a href="{% url 'profile' profile.user.username %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-secondary">Save Changes</button>
+                <a href="{% url 'profile' %}" class="btn btn-danger">Cancel</a>
             </form>
         </div>
     </div>

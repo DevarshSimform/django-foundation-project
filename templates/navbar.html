@@ -25,7 +25,7 @@
                     name="q" 
                     placeholder="Search by username..." 
                     aria-label="Search"
-                    value="{{ query|default:'' }}">  <!-- Retain search input -->
+                    value="{{ query|default:'' }}"> 
                 <button class="btn btn-dark" type="submit">Search</button>
             </form>
         {% endif %}
@@ -36,7 +36,7 @@
                       {{ user.username }}
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" href="{% url 'profile' user.username %}">Profile</a></li>
+                      <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
                       <li><a class="dropdown-item" href="{% url 'my_tweets' %}">My Tweets</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>

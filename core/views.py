@@ -48,7 +48,7 @@ def tweet_list(request):
         'query': query,  # Pass query to template
     })
 
-
+@login_required
 def users_list(request):
     profiles = Profile.objects.all()
     return render(request, 'core/users.html', {'profiles': profiles})
@@ -130,9 +130,10 @@ def tweet_confirm_delete(req, tweet_id):
     return render(req, 'core/tweet_confirm_delete.html', {'tweet': tweet})
 
 
-
-def profile(request, username):
-    profile = Profile.objects.get(user__username = username)
+@login_required
+def profile(request):
+    profile = Profile.objects.get(user__username = request.user.username)
+    print(profile)
     return render(request, 'core/profile.html', {'profile': profile, 'profile_user': request.user})
 
 
